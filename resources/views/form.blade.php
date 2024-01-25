@@ -98,8 +98,33 @@
             bottom: 0;
             width: 100%;
         }
-
-
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .warning-box {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 15px; 
+            margin: 20px;
+            border-radius: 5px;
+        }
+        .warning-box ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .warning-box li {
+            color: #721c24;
+            padding: 5px 0;
+        }
+        .warning-box li:not(:last-child) {
+            border-bottom: 1px solid #f5c6cb;
+        }
 
     </style>
 </head>
@@ -110,10 +135,21 @@
 
     <br>
     <fieldset>
+
+        <div class="warning-box">
+            @if($errors->any())
+            <ul>
+                @foreach($errors->all() as $error)
+                    <li> {{$error}} </li>
+                @endforeach
+            </ul>
+            @endif
+        </div>
+
         <legend>Ajouter un produit</legend>
-        <form action="{{ route('produits.store') }}" method='POST'>
+        <form action="{{ route('produits.store') }}" method='post'>
             @csrf
-            @method('PUT')
+            @method('post')
 
             <table border='1'>
                 <tr>
@@ -125,49 +161,24 @@
                 </tr>
                 <tr>
                     <td><input type="text" name="Libelle">
-                        @error('Libelle')
-                        <div>
-                            {{$message}}
-                        </div>
-                        @enderror
-                    </td>
+                </td>
                     <td><input type="text" name="Marque">
-                    @error('Marque')
-                        <div>
-                            {{$message}}
-                        </div>
-                        @enderror
                 </td>
                     <td><input type="number" name="Prix">
-                    @error('Prix')
-                        <div>
-                            {{$message}}
-                        </div>
-                        @enderror
                 </td>
                     <td><input type="number" name="Stock">
-                    @error('Stock')
-                        <div>
-                            {{$message}}
-                        </div>
-                        @enderror
                 </td>
                     <td>
                     <input type="file" name="file">
-                    @error('file')
-                        <div>
-                            {{$message}}
-                        </div>
-                        @enderror
                     </td>
                 </tr>
             </table>
+            <input type="submit" value="Ajouter un produit">
         </form>
     </fieldset>
 
     <br>
-    <button><a href="/form">Ajouter un produit</a></button>
-
+    <!--<button ><a href="/">Ajouter un produit</a></button>-->
     <footer>
         <h4>welcome to our shop</h4>
     </footer>

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\StorePostRequest;
+//use App\Http\Requests\StorePostRequest;
+use App\Models\produit;
 
 class gestionProduitController extends Controller
 {
@@ -14,6 +15,7 @@ class gestionProduitController extends Controller
      */
     public function index(Request $request)
     {
+        /*
         $produits=[
             [
                 "Libelle" => "Laptop",
@@ -58,7 +60,9 @@ class gestionProduitController extends Controller
                 "Image" => "smartwatch_image.jpg"
             ]
         ];
-        
+        */
+
+        $produits = produit::all();
         return view('listProduits',['produits'=>$produits]);
     }
 
@@ -78,16 +82,33 @@ class gestionProduitController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StorePostRequest $request)
+    public function store(Request $request)
     {
+
+        $data = $request->validate([
+            'Libelle' => 'required | string',
+            'Marque' => 'required',
+            'Prix' => 'required | numeric',
+            'Stock' => 'required | integer | min:1 | max:4',
+            'Image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+
+        ]);
+
+        $newProduit = produit::create($data);
+        //return redirect(route('produits.index'))->with('succès, produit est ajouter!');
+
+        return redirect(route('produits.index'))->with('success', 'Produit est ajouté!');
+
+        /*
         $Libelle=$request->input('Libelle');
         $Marque=$request->input('Marque');
         $Prix=$request->input('Prix');
         $Stock=$request->input('Stock');
         $Image=$request->input('Image');
 
-        dd($request->all(), $Libelle);
-        return 'Hello';
+        //dd($request->all(), $Libelle);
+        //dd($request);
+        */
     }
 
     /**
@@ -107,9 +128,9 @@ class gestionProduitController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(produit $produit)
     {
-        //
+        return view('produits.edit', ['produit' => $produit]);
     }
 
     /**
@@ -119,9 +140,27 @@ class gestionProduitController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$id)
+    public function update(produit $produit, Request $request)
     {
-        return view('produits');
+
+        $data = $request->validate([
+            'Libelle' => 'required | string',
+            'Marque' => 'required',
+            'Prix' => 'required | numeric',
+            'Stock' => 'required | integer | min:1 | max:4',
+            'Image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+
+        ]);
+
+        $produit->update($data);
+        return redirect(route('produits.index'))->with('success, produit est modifier!');
+
+       /*
+        $produit = produit::find($id);
+        $produit->update($request->all());
+
+        return redirect(route('produits.index'));
+        */
     }
 
     /**
@@ -130,8 +169,9 @@ class gestionProduitController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(produit $produit)
     {
-        //
+        $produit->delete();
+        return redirect(route('produits.index'))->with('success, produit est supprimé!');
     }
 }

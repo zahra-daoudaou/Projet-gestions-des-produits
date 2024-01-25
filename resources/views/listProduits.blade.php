@@ -87,6 +87,24 @@
             bottom: 0;
             width: 100%;
         }
+        .warning-box {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 15px; 
+            margin: 20px;
+            border-radius: 5px;
+        }
+        .warning-box ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .warning-box li {
+            color: #721c24;
+            padding: 5px 0;
+        }
+        .warning-box li:not(:last-child) {
+            border-bottom: 1px solid #f5c6cb;
+        }
     </style>
 </head>
 <body>
@@ -94,9 +112,21 @@
         <h1>OurShop</h1>
     </header>
 
+    <br>
+
+    <button> <a href="produits/form">Ajouter un produit</a> </button>
+
+    <div class="warning-box">
+        @if(session()->has('success'))
+            <div>
+                {{session('success')}}
+            </div>
+        @endif
+    </div>
+
     <table border='1'>
         <tr>
-            <th>Liste des produits</th>
+            <th style="color: #ff1a75;">Liste des produits</th>
         </tr>
         <tr>
             <th>Libelle</th>
@@ -104,7 +134,8 @@
             <th>Prix</th>
             <th>Stock</th>
             <th>Image</th>
-            <th>Action</th>
+            <th>Modifier</th>
+            <th>Supprimé</th>
         </tr>
 
         @foreach($produits as $value)
@@ -114,19 +145,29 @@
             <td>{{ $value['Marque'] }}</td>
             <td>{{ $value['Prix'] }}</td>
             <td>{{ $value['Stock'] }}</td>
-            <td>{{ $value['Image'] }}</td>
+            <td>
+                @if(isset($value['Image']))
+                    <img src="{{ $value['Image'] }}" alt="Image de Produit" style="max-width: 100px; max-height: 100px;">
+                @else
+                    No Image
+                @endif
+            </td>
             <td>
             <button>
-                <a href="/modifier">Modifier</a>
+                <a href="{{route('produits.edit',['produit' => $produit ])}}">Modifier</a>
             </button>
+            </td>
+            <td>
+                <form action="{{ route('produits.destroy',['produit'=>$produit]) }}" method='post'>
+                    @csrf
+                    @method('delete')
+                    <input type="submit" value="Supprimé">
+                </form>
             </td>
         </tr>
     
         @endforeach
     </table>
-
-    <br>
-    <button> <a href="/form">Ajouter un produit</a> </button>
 
     <footer>
         <h4>welcome to our shop</h4>
